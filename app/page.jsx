@@ -212,10 +212,8 @@ export default function HomePage() {
       // Kill body tween (BG color transition) cleanly
       try {
         if (window.__gsap) window.__gsap.killTweensOf('body');
-        if (window.__ST) window.__ST.getAll().forEach(t => t.kill());
       } catch(e) {}
       if (ctx) { try { ctx.revert(); } catch(e) {} }
-      splitInstances.forEach(sp => { try { sp.revert(); } catch(e) {} });
       observers.forEach(obs => obs.disconnect());
       intervals.forEach(iv => clearInterval(iv));
       clearTimeout(rsT);

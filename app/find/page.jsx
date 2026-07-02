@@ -85,7 +85,6 @@ export default function FindPage() {
     return () => {
       isMounted = false;
       if (ctx) ctx.revert();
-      splitInstances.forEach(sp => sp.revert());
     };
   }, []);
 

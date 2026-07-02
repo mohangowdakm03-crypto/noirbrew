@@ -62,7 +62,6 @@ export default function ContactPage() {
     return () => {
       isMounted = false;
       if (ctx) ctx.revert();
-      splitInstances.forEach(sp => sp.revert());
     };
   }, []);
 

@@ -148,7 +148,6 @@ export default function MenuPage() {
     return () => {
       isMounted = false;
       if (ctx) ctx.revert();
-      splitInstances.forEach(sp => sp.revert());
       observers.forEach(obs => obs.disconnect());
       clearTimeout(rsT);
     };
