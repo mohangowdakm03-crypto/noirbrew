@@ -18,6 +18,9 @@ export default function HomePage() {
       const SplitType         = (await import('split-type')).default;
       if (!isMounted) return;
       gsap.registerPlugin(ScrollTrigger);
+      // Store on window so cleanup can access them synchronously
+      window.__gsap = gsap;
+      window.__ST   = ScrollTrigger;
 
       ctx = gsap.context(() => {
         /* ---- Intro overlay ---- */
@@ -203,8 +206,23 @@ export default function HomePage() {
 
     return () => {
       isMounted = false;
-      if (ctx) ctx.revert();
-      splitInstances.forEach(sp => sp.revert());
+      // Restore body state immediately — critical if user navigates mid-intro
+      document.body.style.overflow = '';
+      document.body.style.backgroundColor = '';
+      // Kill all GSAP animations and ScrollTriggers
+      try {
+        const { gsap } = window.__gsap ? { gsap: window.__gsap } : {};
+        if (gsap) {
+          gsap.killTweensOf('body');
+          gsap.killTweensOf('*');
+        }
+        const { ScrollTrigger: ST } = window.__ST ? { ScrollTrigger: window.__ST } : {};
+        if (ST) {
+          ST.getAll().forEach(t => t.kill());
+        }
+      } catch(e) { /* ignore cleanup errors */ }
+      if (ctx) { try { ctx.revert(); } catch(e) {} }
+      splitInstances.forEach(sp => { try { sp.revert(); } catch(e) {} });
       observers.forEach(obs => obs.disconnect());
       intervals.forEach(iv => clearInterval(iv));
       clearTimeout(rsT);
