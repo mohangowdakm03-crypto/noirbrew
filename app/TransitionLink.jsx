@@ -1,19 +1,27 @@
 'use client';
 import { useRouter, usePathname } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
-export default function TransitionLink({ href, children, className, style, ...props }) {
+// All navigable routes — prefetched on mount so their JS chunks are ready before user clicks
+const ALL_ROUTES = ['/', '/story', '/menu', '/find', '/contact', '/account'];
+
+export default function TransitionLink({ href, children, className, style, onClick, ...props }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Eagerly prefetch every route on mount so no network delay on click
+  useEffect(() => {
+    ALL_ROUTES.forEach(route => router.prefetch(route));
+  }, [router]);
+
   const handleTransition = useCallback(async (e) => {
     e.preventDefault();
+    if (onClick) onClick(e);
     if (pathname === href) return;
 
-    // Play exit animation (dark curtain sweeps down)
+    // Play exit curtain animation
     const { gsap } = await import('gsap');
-    
-    // Create curtain if it doesn't exist
+
     let curtain = document.getElementById('page-transition-curtain');
     if (!curtain) {
       curtain = document.createElement('div');
@@ -32,17 +40,17 @@ export default function TransitionLink({ href, children, className, style, ...pr
       document.body.appendChild(curtain);
     }
 
+    // Navigate immediately — page is already prefetched so it's instant.
+    // The curtain plays in parallel and template.jsx lifts it once the new page mounts.
+    router.push(href);
+
     gsap.to(curtain, {
       y: '0%',
-      duration: 0.6,
+      duration: 0.45,
       ease: 'power4.inOut',
-      onComplete: () => {
-        // Push the route once the curtain covers the screen
-        router.push(href);
-      }
     });
 
-  }, [href, pathname, router]);
+  }, [href, pathname, router, onClick]);
 
   return (
     <a href={href} onClick={handleTransition} className={className} style={style} {...props}>
