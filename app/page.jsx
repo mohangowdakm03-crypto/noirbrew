@@ -53,8 +53,9 @@ export default function HomePage() {
 
       /* ---- Horizontal scroll ---- */
       const hTrack = document.getElementById('h-track');
+      let horizontalTween;
       if (hTrack) {
-        gsap.to(hTrack, {
+        horizontalTween = gsap.to(hTrack, {
           x: () => -(hTrack.scrollWidth - window.innerWidth),
           ease: 'none',
           scrollTrigger: { trigger: '.h-overflow', start:'top top', end: () => '+=' + (hTrack.scrollWidth - window.innerWidth), scrub:1, pin:true, anticipatePin:1, invalidateOnRefresh:true },
@@ -80,15 +81,18 @@ export default function HomePage() {
       document.querySelectorAll('h1,h2,h3').forEach(el => headObs.observe(el));
 
       /* ---- Clip-path image reveals ---- */
-      const imgObs = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
-          gsap.to(entry.target, { clipPath:'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration:1.1, ease:'power4.inOut' });
-          obs.unobserve(entry.target);
+      document.querySelectorAll('.img-reveal').forEach(el => {
+        const isHorizontal = !!el.closest('#h-track');
+        gsap.to(el, {
+          clipPath:'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+          duration:1.1, ease:'power4.inOut',
+          scrollTrigger: {
+            trigger: el,
+            containerAnimation: isHorizontal ? horizontalTween : null,
+            start: isHorizontal ? 'left 90%' : 'top 90%',
+          }
         });
-      }, { threshold: 0.1 });
-      observers.push(imgObs);
-      document.querySelectorAll('.img-reveal').forEach(el => imgObs.observe(el));
+      });
 
       /* ---- Section entrances ---- */
       const sectObs = new IntersectionObserver((entries, obs) => {
