@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
 
 export default function Atmosphere() {
   const mountRef = useRef(null);
@@ -8,17 +7,21 @@ export default function Atmosphere() {
   useEffect(() => {
     let animationFrameId;
     const currentMount = mountRef.current;
+    let renderer, bgPlane, bgMaterial, beanGeo, beanMat;
+
+    (async () => {
+      const THREE = await import('three');
     
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    const initW = document.documentElement.clientWidth;
-    const initH = window.innerHeight;
-    renderer.setSize(initW, initH);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    renderer.autoClear = false;
-    // Prevent canvas from causing horizontal overflow
-    renderer.domElement.style.display = 'block';
-    renderer.domElement.style.maxWidth = '100%';
-    currentMount.appendChild(renderer.domElement);
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      const initW = document.documentElement.clientWidth;
+      const initH = window.innerHeight;
+      renderer.setSize(initW, initH);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      renderer.autoClear = false;
+      renderer.domElement.style.display = 'block';
+      renderer.domElement.style.maxWidth = '100%';
+      if (!currentMount) return;
+      currentMount.appendChild(renderer.domElement);
 
     // ==========================================
     // 1. BACKGROUND SCENE (Orthographic Shader)
@@ -71,8 +74,8 @@ export default function Atmosphere() {
       }
     `;
 
-    const bgMaterial = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms, depthWrite: false, depthTest: false });
-    const bgPlane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bgMaterial);
+    bgMaterial = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms, depthWrite: false, depthTest: false });
+    bgPlane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bgMaterial);
     bgScene.add(bgPlane);
 
     // ==========================================
@@ -93,7 +96,7 @@ export default function Atmosphere() {
     mainScene.add(rimLight);
 
     // Procedural Coffee Bean Geometry — use higher segments for smooth crease
-    const beanGeo = new THREE.SphereGeometry(1, 48, 48);
+    beanGeo = new THREE.SphereGeometry(1, 48, 48);
     beanGeo.scale(0.75, 1.35, 0.65); // taller, flatter ellipsoid
     
     // Carve the crease deeply on the front face (z > 0)
@@ -204,7 +207,7 @@ export default function Atmosphere() {
     rc.fillRect(0, 0, texSize, texSize);
     const roughTexture = new THREE.CanvasTexture(roughCanvas);
 
-    const beanMat = new THREE.MeshStandardMaterial({
+    beanMat = new THREE.MeshStandardMaterial({
       map:          beanTexture,
       roughnessMap: roughTexture,
       roughness:    0.55,
@@ -311,16 +314,21 @@ export default function Atmosphere() {
       animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+      render();
+    })(); // end async IIFE
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
-      currentMount.removeChild(renderer.domElement);
-      bgPlane.geometry.dispose(); bgMaterial.dispose();
-      beanGeo.dispose(); beanMat.dispose();
-      renderer.dispose();
+      try {
+        if (renderer && currentMount && renderer.domElement.parentNode === currentMount) {
+          currentMount.removeChild(renderer.domElement);
+        }
+        if (bgPlane) { bgPlane.geometry.dispose(); }
+        if (bgMaterial) { bgMaterial.dispose(); }
+        if (beanGeo) { beanGeo.dispose(); }
+        if (beanMat) { beanMat.dispose(); }
+        if (renderer) { renderer.dispose(); }
+      } catch(e) { /* ignore cleanup errors */ }
     };
   }, []);
 
