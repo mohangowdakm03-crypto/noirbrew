@@ -7,6 +7,7 @@ import SmoothScroll from './SmoothScroll';
 import { AppProvider } from './AppContext';
 import Atmosphere   from './Atmosphere';
 import CartSidebar  from './CartSidebar';
+import ErrorBoundary from './ErrorBoundary';
 
 const inter = Inter({ subsets: ['latin'], weight: ['300','400','500'], variable: '--font-inter' });
 const cormorant = Cormorant_Garamond({
@@ -32,8 +33,10 @@ export default function RootLayout({ children }) {
           <div id="grain" aria-hidden="true" />
           <Nav />
           <CartSidebar />
-          <main>{children}</main>
-          <Footer />
+          <ErrorBoundary>
+            <main>{children}</main>
+            <Footer />
+          </ErrorBoundary>
         </AppProvider>
       </body>
     </html>
