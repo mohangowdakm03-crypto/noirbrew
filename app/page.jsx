@@ -229,12 +229,14 @@ export default function HomePage() {
       </div>
 
       {/* ===== HERO BACKGROUND (Pinned separately to sit behind Atmosphere) ===== */}
-      <div id="hero-bg" className={styles.heroBg} style={{
-        backgroundImage:'url(/hero.jpg)', backgroundSize:'cover', backgroundPosition:'center center',
-        filter:'brightness(1.05) saturate(1.15)',
-      }} aria-hidden="true">
-        <div style={{ position:'absolute', inset:0, background:'linear-gradient(to bottom, rgba(9,9,11,0.2) 0%, transparent 20%, transparent 80%, rgba(9,9,11,0.95) 100%)' }} />
-        <div style={{ position:'absolute', inset:0, background:'linear-gradient(to right, rgba(9,9,11,0.35) 0%, transparent 15%, transparent 85%, rgba(9,9,11,0.35) 100%)' }} />
+      <div>
+        <div id="hero-bg" className={styles.heroBg} style={{
+          backgroundImage:'url(/hero.jpg)', backgroundSize:'cover', backgroundPosition:'center center',
+          filter:'brightness(1.05) saturate(1.15)',
+        }} aria-hidden="true">
+          <div style={{ position:'absolute', inset:0, background:'linear-gradient(to bottom, rgba(9,9,11,0.2) 0%, transparent 20%, transparent 80%, rgba(9,9,11,0.95) 100%)' }} />
+          <div style={{ position:'absolute', inset:0, background:'linear-gradient(to right, rgba(9,9,11,0.35) 0%, transparent 15%, transparent 85%, rgba(9,9,11,0.35) 100%)' }} />
+        </div>
       </div>
 
       {/* ===== HERO ===== */}

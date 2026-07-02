@@ -1,7 +1,8 @@
 'use client';
-import { Component } from 'react';
+import { Component, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
-export default class ErrorBoundary extends Component {
+class ErrorBoundaryInner extends Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -13,6 +14,12 @@ export default class ErrorBoundary extends Component {
 
   componentDidCatch(error, info) {
     console.error('Page error caught by boundary:', error, info);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.pathname !== prevProps.pathname && this.state.hasError) {
+      this.setState({ hasError: false, error: null });
+    }
   }
 
   render() {
@@ -45,4 +52,9 @@ export default class ErrorBoundary extends Component {
     }
     return this.props.children;
   }
+}
+
+export default function ErrorBoundary({ children }) {
+  const pathname = usePathname();
+  return <ErrorBoundaryInner pathname={pathname}>{children}</ErrorBoundaryInner>;
 }
