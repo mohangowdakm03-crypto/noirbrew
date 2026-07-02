@@ -1,0 +1,106 @@
+/* ============================================================
+   FIND US PAGE — Split layout: scrollable list + sticky map
+============================================================ */
+
+.findLayout {
+  display: flex;
+  height: 100vh;               /* Full viewport — no page scroll */
+  padding-top: 6vw;            /* Space for nav */
+  background: var(--black);
+  overflow: hidden;            /* Prevent the page itself from scrolling */
+}
+
+/* Left column: internally scrollable */
+.listArea {
+  flex: 0 0 45%;
+  padding: 4vw 4vw 8vw 5vw;
+  border-right: 1px solid var(--border);
+  overflow-y: scroll;          /* Scroll happens here only */
+  height: 100%;
+}
+/* Hide scrollbar visually but keep it functional */
+.listArea::-webkit-scrollbar { display: none; }
+.listArea { scrollbar-width: none; }
+
+.header {
+  margin-bottom: 6vw;
+}
+
+.locList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vw;
+}
+
+.locCard {
+  padding: 2.5vw;
+  background: var(--off-black);
+  border: 1px solid var(--border);
+  cursor: none;
+  transition: background 0.3s;
+}
+.locCard:hover {
+  background: var(--charcoal);
+}
+
+.lCity {
+  font-size: max(9px, 0.6vw);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1vw;
+}
+.locCard h3 {
+  font-size: max(24px, 2vw);
+  margin-bottom: 1vw;
+}
+.lAddr {
+  font-size: max(11px, 0.75vw);
+  color: var(--cream);
+  margin-bottom: 0.5vw;
+}
+.lHours {
+  font-size: max(10px, 0.7vw);
+  color: var(--muted);
+}
+
+/* Right column: perfectly still */
+.mapArea {
+  flex: 1;
+  position: relative;          /* Static — never moves */
+  background: var(--charcoal);
+  height: 100%;
+}
+
+.mapPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mapOverlayText {
+  position: absolute;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: max(20px, 1.5vw);
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Mobile: stack vertically, both areas natural height */
+@media (max-width: 900px) {
+  .findLayout {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+  .listArea {
+    flex: 1 1 auto;
+    height: auto;
+    overflow-y: visible;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .mapArea { height: 50vh; }
+}

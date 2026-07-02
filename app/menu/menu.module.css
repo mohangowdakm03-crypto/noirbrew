@@ -1,0 +1,142 @@
+.menuSec {
+  padding: 8vw 5vw 12vw;
+  background: var(--off-black);
+  min-height: 100vh;
+}
+.filterBar {
+  display: flex;
+  gap: 1.5vw;
+  margin-bottom: 6vw;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.filterBtn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 0.8vw 1.6vw;
+  border-radius: 30px;
+  font-family: 'Inter', sans-serif;
+  font-size: max(11px, 0.75vw);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: none;
+  transition: all 0.3s ease;
+}
+.filterBtn:hover, .filterBtn.active {
+  background: var(--accent);
+  color: var(--black);
+  border-color: var(--accent);
+}
+
+.menuGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 3vw;
+}
+
+.menuCard {
+  perspective: 1000px;
+  aspect-ratio: 3 / 4;
+  background: transparent;
+}
+.cardInner {
+  position: relative;
+  width: 100%; height: 100%;
+  text-align: center;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+}
+.menuCard:hover .cardInner {
+  transform: rotateY(180deg);
+}
+.cardFront, .cardBack {
+  position: absolute;
+  width: 100%; height: 100%;
+  backface-visibility: hidden;
+  border: 1px solid var(--border);
+}
+.cardFront {
+  background: var(--charcoal);
+  display: flex;
+  flex-direction: column;
+  padding: 2vw;
+}
+.cardBack {
+  background: var(--black);
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5vw;
+  text-align: left;
+}
+
+.cardImgWrap {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  margin-bottom: 1.5vw;
+}
+.cardInfo {
+  text-align: left;
+}
+.cRegion {
+  font-size: max(9px, 0.6vw);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4vw;
+}
+.cName {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: max(22px, 1.8vw);
+  font-weight: 400;
+  line-height: 1.1;
+  margin-bottom: 0.8vw;
+}
+.cPrice {
+  font-family: 'Inter', sans-serif;
+  font-size: max(12px, 0.8vw);
+  color: var(--muted);
+}
+
+.bNotesLabel {
+  font-size: max(9px, 0.6vw);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5vw;
+}
+.bNotes {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: max(24px, 1.8vw);
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 1.5vw;
+}
+.bDesc {
+  color: var(--muted);
+  margin-bottom: 2vw;
+}
+.bMeta {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 1vw;
+  margin-bottom: 2vw;
+  font-size: max(10px, 0.7vw);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--cream);
+}
+.addBtn {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .menuGrid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .filterBar { gap: 10px; }
+  .filterBtn { padding: 10px 16px; }
+}
