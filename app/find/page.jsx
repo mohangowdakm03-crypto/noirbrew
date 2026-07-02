@@ -24,39 +24,61 @@ export default function FindPage() {
       gsap.registerPlugin(ScrollTrigger);
 
       ctx = gsap.context(() => {
-      const overlay = document.getElementById('page-intro');
-      const logo = document.getElementById('pi-logo');
-      const line = document.getElementById('pi-line');
-      if (overlay && logo && line) {
-        const isClientNav = sessionStorage.getItem('nb_client_nav');
-        if (isClientNav) {
-          // Client-side navigation — curtain already handled the transition, skip intro
-          sessionStorage.removeItem('nb_client_nav');
-          overlay.style.display = 'none';
-          ScrollTrigger.refresh();
-        } else {
-          document.body.style.overflow = 'hidden';
-          const tl = gsap.timeline({ onComplete: () => { document.body.style.overflow = ''; overlay.style.display = 'none'; ScrollTrigger.refresh(); } });
-          tl.to(line, { width: '100%', duration: 0.7, ease: 'power3.inOut' }, 0.3)
-            .to(logo, { opacity: 1, duration: 0.6, ease: 'power2.out' }, 0.5)
-            .to(logo, { letterSpacing: '0.8em', duration: 0.8, ease: 'power2.inOut' }, 0.8)
-            .to(overlay, { yPercent: -100, duration: 0.8, ease: 'power4.inOut' }, 1.8)
-            .from(`.${styles.header}`, { opacity: 0, y: 30, duration: 0.8, ease: 'power3.out' }, 2.2);
+        const overlay = document.getElementById('page-intro');
+        const logo = document.getElementById('pi-logo');
+        const line = document.getElementById('pi-line');
+        if (overlay && logo && line) {
+          const isClientNav = sessionStorage.getItem('nb_client_nav');
+          if (isClientNav) {
+            // Client-side navigation — curtain already handled the transition, skip intro
+            sessionStorage.removeItem('nb_client_nav');
+            overlay.style.display = 'none';
+            ScrollTrigger.refresh();
+          } else {
+            // Parallax bg
+            try {
+              gsap.to('.ph-bg', {
+                y: '20vh',
+                scrollTrigger: { trigger: '.page-hero', start: 'top top', end: 'bottom top', scrub: true }
+              });
+            } catch(e) {}
+            document.body.style.overflow = 'hidden';
+            const tl = gsap.timeline({ onComplete: () => { document.body.style.overflow = ''; overlay.style.display = 'none'; ScrollTrigger.refresh(); } });
+            tl.to(line, { width: '100%', duration: 0.7, ease: 'power3.inOut' }, 0.3)
+              .to(logo, { opacity: 1, duration: 0.6, ease: 'power2.out' }, 0.5)
+              .to(logo, { letterSpacing: '0.8em', duration: 0.8, ease: 'power2.inOut' }, 0.8)
+              .to(overlay, { yPercent: -100, duration: 0.8, ease: 'power4.inOut' }, 1.8)
+              .from(`.${styles.header}`, { opacity: 0, y: 30, duration: 0.8, ease: 'power3.out' }, 2.2);
+          }
         }
-      }
 
-      if (typeof SplitType !== 'undefined') {
-        const h1 = document.querySelector('h1');
-        if (h1) {
-          h1.style.perspective = '600px'; h1.style.overflow = 'hidden';
-          const sp = new SplitType(h1, { types: 'lines' });
-          splitInstances.push(sp);
-          gsap.fromTo(sp.lines, { y: 30, opacity: 0, rotateX: -20 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', delay: 2.2 });
+        // Text reveal
+        if (typeof SplitType !== 'undefined') {
+          const textObs = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+              if (!entry.isIntersecting) return;
+              const el = entry.target;
+              if (el._splitDone) return; el._splitDone = true;
+              try {
+                const sp = new SplitType(el, { types: 'lines' });
+                splitInstances.push(sp);
+                if (sp.lines && sp.lines.length > 0) {
+                  gsap.fromTo(sp.lines, { y: 30, opacity: 0, rotateX: -20 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', transformOrigin: '0% 50% -10px' });
+                }
+              } catch(e) {}
+              obs.unobserve(el);
+            });
+          }, { threshold: 0.1 });
+          observers.push(textObs);
+          document.querySelectorAll('h1').forEach(el => {
+            if (el.closest('#page-intro')) return;
+            el.style.perspective = '600px'; el.style.overflow = 'hidden';
+            textObs.observe(el);
+          });
         }
-      }
 
-      gsap.fromTo(`.${styles.locCard}`, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out', delay: 2.4 });
-      gsap.fromTo(`.${styles.mapArea}`, { opacity: 0, clipPath: 'inset(0 100% 0 0)' }, { opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: 'power4.inOut', delay: 2.5 });
+        gsap.fromTo(`.${styles.locCard}`, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out', delay: 2.4 });
+        gsap.fromTo(`.${styles.mapArea}`, { opacity: 0, clipPath: 'inset(0 100% 0 0)' }, { opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: 'power4.inOut', delay: 2.5 });
       }); // end ctx
     })();
 

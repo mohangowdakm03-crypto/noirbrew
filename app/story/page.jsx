@@ -40,10 +40,12 @@ export default function StoryPage() {
       }
 
       // Parallax bg
-      gsap.to('.ph-bg', {
-        y: '20vh',
-        scrollTrigger: { trigger: '.page-hero', start: 'top top', end: 'bottom top', scrub: true }
-      });
+      try {
+        gsap.to('.ph-bg', {
+          y: '20vh',
+          scrollTrigger: { trigger: '.page-hero', start: 'top top', end: 'bottom top', scrub: true }
+        });
+      } catch(e) {}
 
       // Timeline reveal
       const tlObs = new IntersectionObserver((entries, obs) => {
@@ -75,14 +77,20 @@ export default function StoryPage() {
             if (!entry.isIntersecting) return;
             const el = entry.target;
             if (el._splitDone) return; el._splitDone = true;
-            const sp = new SplitType(el, { types: 'lines' });
-            splitInstances.push(sp);
-            gsap.fromTo(sp.lines, { y: 30, opacity: 0, rotateX: -20 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', transformOrigin: '0% 50% -10px' });
+            try {
+              const sp = new SplitType(el, { types: 'lines' });
+              splitInstances.push(sp);
+              if (sp.lines && sp.lines.length > 0) {
+                gsap.fromTo(sp.lines, { y: 30, opacity: 0, rotateX: -20 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', transformOrigin: '0% 50% -10px' });
+              }
+            } catch(e) {}
             obs.unobserve(el);
           });
         }, { threshold: 0.1 });
         observers.push(textObs);
+        // Exclude elements inside page-intro overlay
         document.querySelectorAll('h1, h2, h3').forEach(el => {
+          if (el.closest('#page-intro')) return;
           el.style.perspective = '600px'; el.style.overflow = 'hidden';
           textObs.observe(el);
         });

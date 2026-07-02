@@ -104,10 +104,12 @@ export default function MenuPage() {
       }
 
       // Parallax
-      gsap.to('.ph-bg', {
-        y: '20vh',
-        scrollTrigger: { trigger: '.page-hero', start: 'top top', end: 'bottom top', scrub: true }
-      });
+      try {
+        gsap.to('.ph-bg', {
+          y: '20vh',
+          scrollTrigger: { trigger: '.page-hero', start: 'top top', end: 'bottom top', scrub: true }
+        });
+      } catch(e) {}
 
       // Text reveal
       if (typeof SplitType !== 'undefined') {
@@ -116,14 +118,19 @@ export default function MenuPage() {
             if (!entry.isIntersecting) return;
             const el = entry.target;
             if (el._splitDone) return; el._splitDone = true;
-            const sp = new SplitType(el, { types: 'lines' });
-            splitInstances.push(sp);
-            gsap.fromTo(sp.lines, { y: 30, opacity: 0, rotateX: -20 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', transformOrigin: '0% 50% -10px' });
+            try {
+              const sp = new SplitType(el, { types: 'lines' });
+              splitInstances.push(sp);
+              if (sp.lines && sp.lines.length > 0) {
+                gsap.fromTo(sp.lines, { y: 30, opacity: 0, rotateX: -20 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', transformOrigin: '0% 50% -10px' });
+              }
+            } catch(e) {}
             obs.unobserve(el);
           });
         }, { threshold: 0.1 });
         observers.push(textObs);
         document.querySelectorAll('h1').forEach(el => {
+          if (el.closest('#page-intro')) return;
           el.style.perspective = '600px'; el.style.overflow = 'hidden';
           textObs.observe(el);
         });

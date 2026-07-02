@@ -209,18 +209,11 @@ export default function HomePage() {
       // Restore body state immediately — critical if user navigates mid-intro
       document.body.style.overflow = '';
       document.body.style.backgroundColor = '';
-      // Kill all GSAP animations and ScrollTriggers
+      // Kill body tween (BG color transition) cleanly
       try {
-        const { gsap } = window.__gsap ? { gsap: window.__gsap } : {};
-        if (gsap) {
-          gsap.killTweensOf('body');
-          gsap.killTweensOf('*');
-        }
-        const { ScrollTrigger: ST } = window.__ST ? { ScrollTrigger: window.__ST } : {};
-        if (ST) {
-          ST.getAll().forEach(t => t.kill());
-        }
-      } catch(e) { /* ignore cleanup errors */ }
+        if (window.__gsap) window.__gsap.killTweensOf('body');
+        if (window.__ST) window.__ST.getAll().forEach(t => t.kill());
+      } catch(e) {}
       if (ctx) { try { ctx.revert(); } catch(e) {} }
       splitInstances.forEach(sp => { try { sp.revert(); } catch(e) {} });
       observers.forEach(obs => obs.disconnect());

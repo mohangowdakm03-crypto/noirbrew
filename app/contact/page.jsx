@@ -45,11 +45,15 @@ export default function ContactPage() {
       // Title reveal
       if (typeof SplitType !== 'undefined') {
         const h1 = document.querySelector('h1');
-        if (h1) {
+        if (h1 && !h1.closest('#page-intro')) {
           h1.style.perspective = '600px'; h1.style.overflow = 'hidden';
-          const sp = new SplitType(h1, { types: 'lines' });
-          splitInstances.push(sp);
-          gsap.fromTo(sp.lines, { y: 30, opacity: 0, rotateX: -20 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', delay: 2.2 });
+          try {
+            const sp = new SplitType(h1, { types: 'lines' });
+            splitInstances.push(sp);
+            if (sp.lines && sp.lines.length > 0) {
+              gsap.fromTo(sp.lines, { y: 30, opacity: 0, rotateX: -20 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', delay: 2.2 });
+            }
+          } catch(e) {}
         }
       }
       }); // end ctx
