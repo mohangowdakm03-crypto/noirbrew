@@ -42,6 +42,8 @@ export default function TransitionLink({ href, children, className, style, onCli
 
     // Navigate immediately — page is already prefetched so it's instant.
     // The curtain plays in parallel and template.jsx lifts it once the new page mounts.
+    // Flag so the destination page skips its own intro animation (the curtain already handles it)
+    sessionStorage.setItem('nb_client_nav', '1');
     router.push(href);
 
     gsap.to(curtain, {

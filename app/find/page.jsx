@@ -28,13 +28,21 @@ export default function FindPage() {
       const logo = document.getElementById('pi-logo');
       const line = document.getElementById('pi-line');
       if (overlay && logo && line) {
-        document.body.style.overflow = 'hidden';
-        const tl = gsap.timeline({ onComplete: () => { document.body.style.overflow = ''; overlay.style.display = 'none'; ScrollTrigger.refresh(); } });
-        tl.to(line, { width: '100%', duration: 0.7, ease: 'power3.inOut' }, 0.3)
-          .to(logo, { opacity: 1, duration: 0.6, ease: 'power2.out' }, 0.5)
-          .to(logo, { letterSpacing: '0.8em', duration: 0.8, ease: 'power2.inOut' }, 0.8)
-          .to(overlay, { yPercent: -100, duration: 0.8, ease: 'power4.inOut' }, 1.8)
-          .from(`.${styles.header}`, { opacity: 0, y: 30, duration: 0.8, ease: 'power3.out' }, 2.2);
+        const isClientNav = sessionStorage.getItem('nb_client_nav');
+        if (isClientNav) {
+          // Client-side navigation — curtain already handled the transition, skip intro
+          sessionStorage.removeItem('nb_client_nav');
+          overlay.style.display = 'none';
+          ScrollTrigger.refresh();
+        } else {
+          document.body.style.overflow = 'hidden';
+          const tl = gsap.timeline({ onComplete: () => { document.body.style.overflow = ''; overlay.style.display = 'none'; ScrollTrigger.refresh(); } });
+          tl.to(line, { width: '100%', duration: 0.7, ease: 'power3.inOut' }, 0.3)
+            .to(logo, { opacity: 1, duration: 0.6, ease: 'power2.out' }, 0.5)
+            .to(logo, { letterSpacing: '0.8em', duration: 0.8, ease: 'power2.inOut' }, 0.8)
+            .to(overlay, { yPercent: -100, duration: 0.8, ease: 'power4.inOut' }, 1.8)
+            .from(`.${styles.header}`, { opacity: 0, y: 30, duration: 0.8, ease: 'power3.out' }, 2.2);
+        }
       }
 
       if (typeof SplitType !== 'undefined') {

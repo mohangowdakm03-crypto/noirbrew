@@ -23,7 +23,12 @@ export default function ContactPage() {
       const overlay = document.getElementById('page-intro');
       const logo = document.getElementById('pi-logo');
       const line = document.getElementById('pi-line');
-      if (overlay && logo && line) {
+      const isClientNav = overlay && sessionStorage.getItem('nb_client_nav');
+      if (isClientNav) {
+        sessionStorage.removeItem('nb_client_nav');
+        if (overlay) overlay.style.display = 'none';
+        ScrollTrigger.refresh();
+      } else if (overlay && logo && line) {
         document.body.style.overflow = 'hidden';
         const tl = gsap.timeline({ onComplete: () => { document.body.style.overflow = ''; overlay.style.display = 'none'; ScrollTrigger.refresh(); } });
         tl.to(line, { width: '100%', duration: 0.7, ease: 'power3.inOut' }, 0.3)
@@ -34,7 +39,8 @@ export default function ContactPage() {
       }
 
       // Staggered form field reveal
-      gsap.fromTo(`.${styles.formGroup}`, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out', delay: 2.5 });
+      const introDelay = isClientNav ? 0 : 2.5;
+      gsap.fromTo(`.${styles.formGroup}`, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out', delay: introDelay });
 
       // Title reveal
       if (typeof SplitType !== 'undefined') {
