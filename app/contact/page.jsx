@@ -106,7 +106,7 @@ export default function ContactPage() {
         <div className={styles.contactContent}>
           <div className={styles.contactHeader}>
             <div className="p-tag" style={{ marginBottom: '2vw' }}>Get in touch</div>
-            <h1 dangerouslySetInnerHTML={{ __html: 'Speak with<br /><em style="color: var(--accent)">The Roaster.</em>' }} />
+            <h1 className={styles.contactTitle} dangerouslySetInnerHTML={{ __html: 'Speak with<br /><em style="color: var(--accent)">The Roaster.</em>' }} />
             <p>For wholesale inquiries, press, or to learn more about our sourcing practices, please leave a message below.</p>
           </div>
           
